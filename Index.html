@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>CyberEuropa Challenge</title>
+
+<style>
+body {
+    font-family: Arial;
+    background-color: #0b3d91;
+    color: white;
+    text-align: center;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px;
+    margin: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+img {
+    width: 200px;
+    border-radius: 10px;
+}
+
+/* Timer */
+#timerBar {
+    width: 80%;
+    height: 20px;
+    background: white;
+    margin: 20px auto;
+    border-radius: 10px;
+}
+
+#time {
+    height: 100%;
+    width: 100%;
+    background: green;
+}
+
+/* Vidas */
+#lives {
+    font-size: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🇪🇺 CyberEuropa Challenge</h1>
+
+<div id="lives">❤️❤️❤️</div>
+
+<div id="timerBar">
+    <div id="time"></div>
+</div>
+
+<img id="image" src="">
+
+<h2 id="question"></h2>
+
+<div id="answers"></div>
+
+<h3 id="score"></h3>
+
+<button id="restart" onclick="restartGame()" style="display:none;">
+Reiniciar
+</button>
+
+</div>
+
+<script>
+
+const questions = [
+{
+question: "¿Qué es el phishing?",
+image: "https://via.placeholder.com/200",
+answers: ["Un virus", "Un engaño para robar datos", "Un antivirus", "Un tipo de IA"],
+correct: 1
+},
+{
+question: "¿Qué ley protege datos en Europa?",
+image: "https://via.placeholder.com/200",
+answers: ["GDPR", "FIFA", "NASA", "UEFA"],
+correct: 0
+},
+{
+question: "¿Qué hace la inteligencia artificial?",
+image: "https://via.placeholder.com/200",
+answers: ["Cocinar", "Imitar inteligencia humana", "Volar", "Nada"],
+correct: 1
+},
+{
+question: "¿Qué es una contraseña segura?",
+image: "https://via.placeholder.com/200",
+answers: ["123456", "Tu nombre", "Larga y con símbolos", "abcd"],
+correct: 2
+},
+{
+question: "¿Qué derecho digital tienes en Europa?",
+image: "https://via.placeholder.com/200",
+answers: ["Privacidad", "Hackear", "Robar datos", "Ninguno"],
+correct: 0
+}
+];
+
+let current = 0;
+let score = 0;
+let lives = 3;
+let timeLeft = 120;
+let timer;
+
+function loadQuestion() {
+    document.getElementById("question").innerText = questions[current].question;
+    document.getElementById("image").src = questions[current].image;
+
+    const answersDiv = document.getElementById("answers");
+    answersDiv.innerHTML = "";
+
+    questions[current].answers.forEach((answer, index) => {
+        const btn = document.createElement("button");
+        btn.innerText = answer;
+        btn.onclick = () => checkAnswer(index);
+        answersDiv.appendChild(btn);
+    });
+}
+
+function checkAnswer(index) {
+    if (index === questions[current].correct) {
+        score++;
+    } else {
+        lives--;
+        updateLives();
+    }
+
+    if (lives === 0) {
+        endGame(false);
+        return;
+    }
+
+    current++;
+
+    if (current < questions.length) {
+        loadQuestion();
+    } else {
+        endGame(true);
+    }
+}
+
+function updateLives() {
+    let hearts = "";
+    for (let i = 0; i < lives; i++) {
+        hearts += "❤️";
+    }
+    document.getElementById("lives").innerText = hearts;
+}
+
+function endGame(win) {
+    clearInterval(timer);
+
+    document.getElementById("question").innerText = win ? "¡Has ganado!" : "💀 Has perdido";
+    document.getElementById("answers").innerHTML = "";
+    document.getElementById("score").innerText = "Puntuación: " + score;
+    document.getElementById("restart").style.display = "block";
+}
+
+function restartGame() {
+    current = 0;
+    score = 0;
+    lives = 3;
+    timeLeft = 120;
+
+    document.getElementById("score").innerText = "";
+    document.getElementById("restart").style.display = "none";
+
+    updateLives();
+    loadQuestion();
+    startTimer();
+}
+
+function startTimer() {
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("time").style.width = (timeLeft / 120) * 100 + "%";
+
+        if (timeLeft <= 0) {
+            endGame(false);
+        }
+    }, 1000);
+}
+
+loadQuestion();
+updateLives();
+startTimer();
+
+</script>
+
+</body>
+</html>
